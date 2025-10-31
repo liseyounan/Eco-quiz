@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎃 할로윈 생태 퀴즈 👻</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nanum+Gothic&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at center, #1a001a 0%, #000 100%);
+        color: #fdd835;
+        font-family: 'Nanum Gothic', sans-serif;
+        overflow: hidden;
+    }
+
+    .container {
+        background: rgba(30, 0, 30, 0.9);
+        border: 2px solid #ff7518;
+        border-radius: 20px;
+        padding: 40px;
+        width: 90%;
+        max-width: 650px;
+        text-align: center;
+        box-shadow: 0 0 30px #ff6f00, 0 0 60px rgba(255, 140, 0, 0.4);
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from { box-shadow: 0 0 20px #ff6f00; }
+        to { box-shadow: 0 0 50px #ffb74d; }
+    }
+
+    h1 {
+        font-family: 'Creepster', cursive;
+        font-size: 2.8em;
+        color: #ff7518;
+        text-shadow: 0 0 10px #ff6f00, 0 0 20px #ffb300;
+        margin-bottom: 30px;
+    }
+
+    .question {
+        font-size: 1.4em;
+        margin-bottom: 30px;
+        color: #fff6cc;
+        text-shadow: 0 0 8px #ffb74d;
+    }
+
+    .answers {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    button {
+        background: #ff7518;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #1a001a;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(255, 117, 24, 0.4);
+    }
+
+    button:hover {
+        background: #ffb74d;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #ffb74d;
+    }
+
+    .hidden { display: none; }
+
+    .result {
+        font-family: 'Creepster', cursive;
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #ffb300;
+        text-shadow: 0 0 10px #ff6f00;
+    }
+
+    .score {
+        font-size: 1.2em;
+        color: #fff6cc;
+        margin-bottom: 30px;
+    }
+
+    #restartBtn {
+        background: #6a1b9a;
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        border: 2px solid #ba68c8;
+        box-shadow: 0 0 10px #ab47bc;
+    }
+
+    #restartBtn:hover {
+        background: #9c27b0;
+        box-shadow: 0 0 15px #e1bee7;
+    }
+
+    /* 할로윈 데코 효과 */
+    .pumpkin, .ghost {
+        position: absolute;
+        font-size: 3em;
+        opacity: 0.7;
+        animation: float 5s ease-in-out infinite alternate;
+        user-select: none;
+        pointer-events: none;
+    }
+    .pumpkin { color: #ff7518; top: 10%; left: 5%; animation-delay: 1s; }
+    .ghost { color: #fff; bottom: 15%; right: 8%; font-size: 3.5em; animation-delay: 2s; }
+    @keyframes float {
+        from { transform: translateY(0px); opacity: 0.7; }
+        to { transform: translateY(-20px); opacity: 1; }
+    }
+</style>
+</head>
+<body>
+    <div class="pumpkin">🎃</div>
+    <div class="ghost">👻</div>
+    <div class="container">
+        <h1>🎃 할로윈 생태 퀴즈 👻</h1>
+        <div id="quiz">
+            <div class="question" id="question">문제가 여기에 표시됩니다</div>
+            <div class="answers" id="answers"></div>
+        </div>
+        <div id="resultScreen" class="hidden">
+            <div class="result">👻 결과 발표 🎃</div>
+            <div class="score" id="score"></div>
+            <button id="restartBtn">다시하기</button>
+        </div>
+    </div>
+
+<script>
+const quizData = [
+    { q: "지구 평균기온 상승의 주요 원인은?", a: ["온실가스 증가", "산성비 감소", "산소 농도 증가", "태양 흑점 활동 감소"], correct: 0 },
+    { q: "플라스틱 폐기물이 바다에서 분해되어 생기는 것은?", a: ["미세먼지", "미세플라스틱", "이산화탄소", "유기산"], correct: 1 },
+    { q: "멸종 위기종 보존의 목적은?", a: ["생물다양성 유지", "농업 생산성 향상", "도시 개발 촉진", "관광 수익 증가"], correct: 0 },
+    { q: "탄소중립이란 무엇을 의미할까?", a: ["탄소 배출량을 0으로 만드는 것", "탄소 배출과 흡수를 같게 하는 것", "탄소를 모두 없애는 것", "탄소를 물로 바꾸는 것"], correct: 1 },
+    { q: "산호초가 하얗게 변하는 현상은?", a: ["백화현상", "청화현상", "적조현상", "황화현상"], correct: 0 },
+    { q: "지속 가능한 발전의 핵심 원칙이 아닌 것은?", a: ["환경 보전", "경제 성장", "사회적 형평", "무제한 자원 사용"], correct: 3 },
+    { q: "이끼, 지의류 등이 처음으로 자라는 지역을 뭐라 할까?", a: ["극상림", "선구식생", "원시림", "후기식생"], correct: 1 },
+    { q: "해양 생태계에서 플랑크톤의 역할은?", a: ["최상위 포식자", "1차 생산자", "분해자", "기생자"], correct: 1 },
+    { q: "대기 중 온실가스가 아닌 것은?", a: ["이산화탄소", "메탄", "아산화질소", "질소"], correct: 3 },
+    { q: "생태계의 에너지원은 주로 어디에서 오는가?", a: ["태양", "달", "지구 내부 열", "바람"], correct: 0 }
+];
+
+let current = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const quizEl = document.getElementById("quiz");
+const resultScreen = document.getElementById("resultScreen");
+const scoreEl = document.getElementById("score");
+const restartBtn = document.getElementById("restartBtn");
+
+function showQuestion() {
+    const q = quizData[current];
+    questionEl.textContent = `Q${current + 1}. ${q.q}`;
+    answersEl.innerHTML = "";
+    q.a.forEach((ans, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = ans;
+        btn.onclick = () => checkAnswer(i);
+        answersEl.appendChild(btn);
+    });
+}
+
+function checkAnswer(selected) {
+    const correct = quizData[current].correct;
+    if (selected === correct) {
+        score++;
+        flashEffect("lime");
+    } else {
+        flashEffect("red");
+    }
+    current++;
+    if (current < quizData.length) {
+        setTimeout(showQuestion, 500);
+    } else {
+        setTimeout(showResult, 600);
+    }
+}
+
+function flashEffect(color) {
+    document.body.style.background = color;
+    setTimeout(() => {
+        document.body.style.background = "radial-gradient(circle at center, #1a001a 0%, #000 100%)";
+    }, 200);
+}
+
+function showResult() {
+    quizEl.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+    scoreEl.textContent = `당신의 점수는 ${score} / ${quizData.length}점! 🎃`;
+}
+
+restartBtn.onclick = () => {
+    current = 0; score = 0;
+    quizEl.classList.remove("hidden");
+    resultScreen.classList.add("hidden");
+    showQuestion();
+};
+
+showQuestion();
+</script>
+</body>
+</html>
